@@ -1,0 +1,25 @@
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: http-testkubernetes
+  namespace: production
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  labels:
+    app: http-testkubernetes
+spec:
+  tls:
+  - hosts:
+    - testkubernetes.5by1.com
+    secretName: tls-secret
+  rules:
+  - host: testkubernetes.5by1.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: testkubernetes
+          servicePort: 8080
