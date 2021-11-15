@@ -1,3 +1,5 @@
+## Steps to deploy a node application into Kubernetes EKS ##
+
 #### References ####
 * https://www.youtube.com/watch?v=_jEgzqyUWKE
 * https://github.com/antonputra/tutorials/tree/main/lessons/046
@@ -64,7 +66,7 @@ npm-debug.log
 #### Push docker images into eks repository in AWS ####
 * Open aws console `https://ap-south-1.console.aws.amazon.com/ecr/repositories` and click on `Create Repository`
 * Choose `Visibility settings` as private
-* Give any name `testkubernets`
+* Give any name, say `testkubernets`
 * Leave other fields with default values
 ![eks repository list in aws](./docs/aws-repository-list.png)
 * Now select the repository `aws-repository-list` and click `View Push Commands` button. Now you could see commands to push docker images into repository.
@@ -79,7 +81,7 @@ eg : `docker tag testkubernets:v1.0.0 913508394982.dkr.ecr.ap-south-1.amazonaws.
 * Wait for a few minutes to complete the command execution.
 
 
-#### Create EKS Cluster ####
+#### Create EKS Cluster (Default VPC will be created)####
 * Create a yaml script in project root directory named `eks.yaml` with following contents.
 * `cd ..`
 * Change the aws region in the yaml script
@@ -104,6 +106,13 @@ managedNodeGroups:
 * Create the cluster using the command `eksctl create cluster -f eks.yaml`
 * At any point of time, if you would like to delete the cluster, use the command `eksctl delete cluster -f eks.yaml`
 * Wait for a few minutes to complete the cluster creation process.
+
+#### Create EKS Cluster - With custom VPC ####
+* Create a VPC (Stack in CloudFormation) -> `https://console.aws.amazon.com/cloudformation/home?region=ap-south-1#/stacks/create/template`
+* Use the template file `vpc/amazon-eks-vpc-private-subnets.yaml`
+* Change CIRD if needed -> `By default it was 192.168 series, I changed to 10.30`
+* Update the vpc id and subnet ids in `eks2.yaml`
+* Create the cluster using the command `eksctl create cluster -f eks.yaml`
 
 #### Deploy node app into Kubernetes ####
 * Create a folder `k8s` in project root folder
@@ -139,12 +148,7 @@ spec:
         - name: http
           containerPort: 8080
         resources:
-          requests:
-            memory: 64Mi
-            cpu: 100m
-          limits:
-            memory: 128Mi
-            cpu: 300m
+          requests: {}
 ---
 apiVersion: v1
 kind: Service
@@ -540,3 +544,9 @@ spec:
 * Find host name using `kubectl get ing -n production`
 * Find ip address using `nslookup ac5a031917141484f88de73d0055ffcf-dc45f856834aad99.elb.ap-south-1.amazonaws.com`
 * Verify it using `curl --resolve testkubernetes.5by1.com:443:15.206.13.238 https://testkubernetes.5by1.com/devops`
+
+#### Debug ####
+* List pods `kubectl get pods -n production`
+* List services `kubectl get svc -n production`
+* Check if any error in pods `kubectl logs -n{namespace} pod/{pod_name}`
+* To get terminal of a pod `kubectl exec -it -n production {pod_name} -- bash`

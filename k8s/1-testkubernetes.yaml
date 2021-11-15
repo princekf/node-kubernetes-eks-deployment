@@ -29,12 +29,7 @@ spec:
         - name: http
           containerPort: 8080
         resources:
-          requests:
-            memory: 64Mi
-            cpu: 100m
-          limits:
-            memory: 128Mi
-            cpu: 300m
+          requests: {}
 ---
 apiVersion: v1
 kind: Service

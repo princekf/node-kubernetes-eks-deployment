@@ -1,0 +1,26 @@
+---
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+  name: testkubernets
+  region: ap-south-1
+vpc:
+  id: "vpc-0fc4d61c86bda7c14"
+  subnets:
+    private:
+      ap-south-1a:
+        id: "subnet-0bdbcaa1d5a7d6d51"
+      ap-south-1b:
+        id: "subnet-01fdd963a537279f8"
+    public:
+      ap-south-1a:
+        id: "subnet-0a42afe28bb1dd13d"
+      ap-south-1b:
+        id: "subnet-0fb2233960f4c18d7"
+managedNodeGroups:
+- name: on-demand
+  labels:
+    role: on-demand
+  instanceType: t3.medium
+  desiredCapacity: 1
+  volumeSize: 20
