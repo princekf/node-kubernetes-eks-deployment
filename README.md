@@ -550,3 +550,6 @@ spec:
 * List services `kubectl get svc -n production`
 * Check if any error in pods `kubectl logs -n{namespace} pod/{pod_name}`
 * To get terminal of a pod `kubectl exec -it -n production {pod_name} -- bash`
+
+#### To change the cluster ####
+* `aws eks update-kubeconfig --name <clustername> --region <region>`
